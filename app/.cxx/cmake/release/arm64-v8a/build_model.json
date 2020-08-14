@@ -1,0 +1,72 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available",
+      "sdkFolder": "C:\\Users\\admin\\AppData\\Local\\Android\\Sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates",
+      "gradleModulePathName": ":app",
+      "moduleRootFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app",
+      "makeFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\src\\main\\cpp\\CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\.cxx",
+      "cxxFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx",
+      "ndkFolder": "C:\\Users\\admin\\AppData\\Local\\Android\\Sdk\\ndk\\21.3.6528147",
+      "ndkVersion": "21.3.6528147",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [
+      "-DANDROID_STL\u003dc++_shared"
+    ],
+    "cFlagList": [],
+    "cppFlagsList": [
+      "-std\u003dc++11"
+    ],
+    "variantName": "release",
+    "soFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates\\cmake\\release\\lib",
+    "objFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates\\cmake\\release\\obj",
+    "jsonFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release",
+    "gradleBuildOutputFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release",
+    "isDebuggableEnabled": false,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "ARM64_V8A",
+  "abiPlatformVersion": 16,
+  "cxxBuildFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a",
+  "jsonFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a\\android_gradle_build.json",
+  "gradleBuildOutputFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a",
+  "objFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a",
+  "buildCommandFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a\\build_command.txt",
+  "buildOutputFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a\\build_output.txt",
+  "modelOutputFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a\\build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\CMakeLists.txt",
+    "toolchainWrapperFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\build_generation_state.json",
+    "cacheKeyFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_cache_key.json",
+    "compilerCacheUseFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_cache_use.json",
+    "compilerCacheWriteFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\arm64-v8a\\compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a\\json_generation_record.json",
+  "compileCommandsJsonFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\arm64-v8a\\compile_commands.json"
+}
