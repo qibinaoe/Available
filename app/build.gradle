@@ -55,5 +55,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation "com.mikepenz:materialdrawer:6.1.2"
 
 }
