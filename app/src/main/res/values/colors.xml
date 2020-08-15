@@ -3,4 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="main_background_color">#EEF2F5</color>
+    <color name="main_time_color">#959799</color>
+    <color name="main_timename_color">#8EB07F</color>
+    <color name="main_date_color">#787A7B</color>
+    <color name="main_location_color">#A5A7A9</color>
+    <color name="main_weather_color">#5098C1</color>
+    <color name="main_vertical_line">#D4D6D8</color>
+    <color name="main_scan_indicator_text_color">#B6B6B6</color>
 </resources>
