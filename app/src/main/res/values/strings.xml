@@ -15,4 +15,11 @@
 
     <string name="drawer_info_nologin">您暂未登陆</string>
     <string name="drawer_item_login_register">登陆/注册</string>
+
+    <string name="login_title_text">登陆</string>
+    <string name="login_hint_account">请输入您的帐号</string>
+    <string name="login_hint_password">请输入您的密码</string>
+    <string name="login_login_btn">登陆</string>
+    <string name="login_info_error_username">账号名不能为空</string>
+    <string name="login_info_error_password">密码不能为空</string>
 </resources>

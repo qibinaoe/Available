@@ -56,5 +56,9 @@ dependencies {
 
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
     implementation "com.mikepenz:materialdrawer:6.1.2"
+    implementation 'com.google.android.material:material:1.0.0'
+
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+
 
 }

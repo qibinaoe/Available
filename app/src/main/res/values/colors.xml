@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#A8D7FF</color>
+    <color name="colorPrimaryDark">#5098C1</color>
+    <color name="colorAccent">#B4D1F5</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray_light">#dcdcdc</color>
+
 
     <color name="main_background_color">#EEF2F5</color>
     <color name="main_time_color">#959799</color>
@@ -16,7 +18,8 @@
 
     <color name="drawer_item_desp_color">#808080</color>
 
-
-
+    <color name="login_input_color">#222222</color>
+    <color name="login_input_hint_color">#B3B3B3</color>
+    <color name="login_line_bg_color">#e6e6e6</color>
 
 </resources>
