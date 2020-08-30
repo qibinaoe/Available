@@ -5,6 +5,7 @@
       "sdkFolder": "C:\\Users\\admin\\AppData\\Local\\Android\\Sdk",
       "isNativeCompilerSettingsCacheEnabled": false,
       "isBuildOnlyTargetAbiEnabled": true,
+      "ideBuildTargetAbi": "x86,armeabi-v7a,armeabi",
       "splitsAbiFilterSet": [],
       "intermediatesFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates",
       "gradleModulePathName": ":app",
@@ -43,13 +44,12 @@
     "gradleBuildOutputFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\debug",
     "isDebuggableEnabled": true,
     "validAbiList": [
-      "ARMEABI_V7A",
-      "ARM64_V8A"
+      "ARMEABI_V7A"
     ],
     "buildTargetSet": []
   },
   "abi": "ARMEABI_V7A",
-  "abiPlatformVersion": 16,
+  "abiPlatformVersion": 21,
   "cxxBuildFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\debug\\armeabi-v7a",
   "jsonFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\debug\\armeabi-v7a\\android_gradle_build.json",
   "gradleBuildOutputFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\debug\\armeabi-v7a",

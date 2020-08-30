@@ -49,7 +49,7 @@
     "buildTargetSet": []
   },
   "abi": "ARMEABI_V7A",
-  "abiPlatformVersion": 16,
+  "abiPlatformVersion": 21,
   "cxxBuildFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\armeabi-v7a",
   "jsonFile": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cmake\\release\\armeabi-v7a\\android_gradle_build.json",
   "gradleBuildOutputFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\release\\armeabi-v7a",

@@ -21,7 +21,7 @@ ANDROID_ABI:UNINITIALIZED=armeabi-v7a
 ANDROID_NDK:UNINITIALIZED=C:\Users\admin\AppData\Local\Android\Sdk\ndk\21.3.6528147
 
 //No help, variable specified on the command line.
-ANDROID_PLATFORM:UNINITIALIZED=android-16
+ANDROID_PLATFORM:UNINITIALIZED=android-21
 
 //No help, variable specified on the command line.
 ANDROID_STL:UNINITIALIZED=c++_shared
@@ -202,7 +202,7 @@ CMAKE_STRIP:FILEPATH=C:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/t
 CMAKE_SYSTEM_NAME:UNINITIALIZED=Android
 
 //No help, variable specified on the command line.
-CMAKE_SYSTEM_VERSION:UNINITIALIZED=16
+CMAKE_SYSTEM_VERSION:UNINITIALIZED=21
 
 //The CMake toolchain file
 CMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/build/cmake/android.toolchain.cmake
@@ -220,10 +220,10 @@ Project_BINARY_DIR:STATIC=D:/Users/admin/AndroidStudioProjects/Available/app/.cx
 Project_SOURCE_DIR:STATIC=D:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp
 
 //Path to a library.
-log-lib:FILEPATH=C:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so
+log-lib:FILEPATH=C:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/21/liblog.so
 
 //Dependencies for the target
-native-lib_LIB_DEPENDS:STATIC=general;opencv_java4;general;android;general;C:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/16/liblog.so;
+native-lib_LIB_DEPENDS:STATIC=general;opencv_java4;general;android;general;C:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/arm-linux-androideabi/21/liblog.so;
 
 
 ########################
