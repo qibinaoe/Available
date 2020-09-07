@@ -27,4 +27,6 @@ public class OpencvJni {
      * @param surface
      */
     public native void setSurface(Surface surface);
+
+
 }

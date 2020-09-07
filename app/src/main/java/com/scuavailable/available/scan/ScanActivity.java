@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 
 
 import com.scuavailable.available.R;
+import com.scuavailable.available.util.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,14 +44,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
 public class ScanActivity extends AppCompatActivity {
 
     private static String TAG = "ScanActivity";
+    private Context mContext;
     ImageButton mBackIb,mTakeIb;
     TextureView mTextureView;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -68,7 +73,8 @@ public class ScanActivity extends AppCompatActivity {
     private Size imageDimension;
 
     private ImageReader imageReader;
-    private File file;
+    private String mFileFolderName;
+    private String mFilename;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
@@ -80,6 +86,7 @@ public class ScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
         Log.i(TAG,"Create");
+        mContext =  this;
         initViews();
     }
 
@@ -138,6 +145,7 @@ public class ScanActivity extends AppCompatActivity {
         @Override
         public void onDisconnected(CameraDevice camera) {
             cameraDevice.close();
+            cameraDevice = null;
         }
         @Override
         public void onError(CameraDevice camera, int error) {
@@ -145,11 +153,11 @@ public class ScanActivity extends AppCompatActivity {
             cameraDevice = null;
         }
     };
+
     final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(ScanActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
@@ -196,16 +204,22 @@ public class ScanActivity extends AppCompatActivity {
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
+                        if (image == null){
+                            Log.e(TAG,"get null");
+                            return;
+                        }
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
+                        byte[] bytes = new byte[buffer.remaining()];
                         buffer.get(bytes);
+                        //调用jni进行计数
+                        // 返回的坐标放入intent
+                        // byte[]放入intent 跳转
                         save(bytes);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -218,10 +232,22 @@ public class ScanActivity extends AppCompatActivity {
                     }
                 }
                 private void save(byte[] bytes) throws IOException {
+                    Date date = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    mFilename = "paper" +format.format(date) + ".jpg";
+                    mFileFolderName = Utils.getCachePath(mContext) + "/paperCount/";
+                    Log.e(TAG,mFileFolderName);
+                    Log.e(TAG,mFilename);
+                    File fileFolder = new File(mFileFolderName);
+                    if(!fileFolder.exists()){
+                        fileFolder.mkdir();
+                    }
+                    File jpgFile = new File(fileFolder,mFilename);
                     OutputStream output = null;
                     try {
-                        output = new FileOutputStream(file);
+                        output = new FileOutputStream(jpgFile);
                         output.write(bytes);
+                        Log.e(TAG,"save");
                     } finally {
                         if (null != output) {
                             output.close();
@@ -234,8 +260,11 @@ public class ScanActivity extends AppCompatActivity {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(ScanActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    createCameraPreview();
+//                    createCameraPreview();
+                    Intent intent = new Intent(mContext, PaperCountActivity.class);
+                    intent.putExtra("filename",mFilename);
+                    intent.putExtra("filefolder",mFileFolderName);
+                    startActivity(intent);
                 }
             };
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -255,6 +284,8 @@ public class ScanActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
     protected void createCameraPreview() {
         try {
             SurfaceTexture texture = mTextureView.getSurfaceTexture();
@@ -292,6 +323,8 @@ public class ScanActivity extends AppCompatActivity {
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+
+
             // Add permission for camera and let user grant the permission
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(ScanActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);

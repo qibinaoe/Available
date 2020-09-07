@@ -4,23 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/photo_view_count"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     <ImageButton
         android:id="@+id/ib_count_back"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="20dp"
         android:background="@drawable/ic_back" />
-
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/photo_view_count"
+    <TextView
+        android:id="@+id/tv_count_number"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:textColor="@color/scan_number_color"
+        android:textStyle="bold"
+        android:text="共有10张"
+        android:gravity="center|bottom"
+        android:layout_marginBottom="30dp"
+        />
     <TextView
         android:id="@+id/tv_current_matrix"
         android:text="hahaha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#60000000"
-        android:gravity="center"
+        android:gravity="center|bottom"
+        android:layout_alignParentBottom="true"
         android:textColor="@android:color/white"/>
 </RelativeLayout>

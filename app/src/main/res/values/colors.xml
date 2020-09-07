@@ -23,5 +23,6 @@
     <color name="login_line_bg_color">#e6e6e6</color>
 
     <color name="scan_take_bg_color">#AEADB1</color>
+    <color name="scan_number_color">#000</color>
 
 </resources>

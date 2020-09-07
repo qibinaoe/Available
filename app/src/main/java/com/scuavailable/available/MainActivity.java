@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivityTestHere";
     private OpencvJni openCvJni;
     private CameraHelper cameraHelper;
-    int cameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
 
     //Drawer
     private AccountHeader headerResult = null;

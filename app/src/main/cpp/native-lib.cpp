@@ -39,21 +39,140 @@ private:
     cv::Ptr<cv::CascadeClassifier> Detector;
 };
 
-cv::Mat countPaperGetImg(cv::Mat img){
 
-    Mat src = img;
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_scuavailable_available_OpencvJni_postData(JNIEnv *env, jobject instance, jbyteArray data_,
+                                                   jint width, jint height, jint cameraId) {
+    jbyte *data = env->GetByteArrayElements(data_, NULL);
+
+    // 数据的行数也就是数据高度，因为数据类型是NV21，所以为Y+U+V的高度, 也就是height + height/4 + height/4
+    Mat src(height*3/2, width, CV_8UC1, data);
+
+    // 转RGB
+    cvtColor(src, src, COLOR_YUV2RGBA_NV21);
+    if (cameraId == 1) {// 前置摄像头
+        //逆时针旋转90度
+        rotate(src, src, ROTATE_90_COUNTERCLOCKWISE);
+        //1：水平翻转   0：垂直翻转
+        flip(src, src, 1);
+    } else {
+        //顺时针旋转90度
+        rotate(src, src, ROTATE_90_CLOCKWISE);
+
+    }
+    Mat gray;
+    //灰度化
+    cvtColor(src, gray, COLOR_RGBA2GRAY);
+    //二值化
+    equalizeHist(gray, gray);
+
+    std::vector<Rect> faces;
+    //检测图片
+    tracker->process(gray);
+    //获取CascadeDetectorAdapter中的检测结果
+    tracker->getObjects(faces);
+    //画出矩形
+    for (Rect face : faces) {
+        rectangle(src, face, Scalar(255, 0, 0));
+    }
+
+    //显示到serface
+    if (window) {
+        ANativeWindow_setBuffersGeometry(window, src.cols, src.rows, WINDOW_FORMAT_RGBA_8888);
+        ANativeWindow_Buffer window_buffer;
+        do {
+            //lock失败 直接brek出去
+            if (ANativeWindow_lock(window, &window_buffer, 0)) {
+                ANativeWindow_release(window);
+                window = 0;
+                break;
+            }
+
+            uint8_t *dst_data = static_cast<uint8_t *>(window_buffer.bits);
+            //stride : 一行多少个数据
+            //（RGBA） * 4
+            int dst_linesize = window_buffer.stride * 4;
+
+            //一行一行拷贝，src.data是图片的RGBA数据，要拷贝到dst_data中，也就是window的缓冲区里
+            for (int i = 0; i < window_buffer.height; ++i) {
+                memcpy(dst_data + i * dst_linesize, src.data + i * src.cols * 4, dst_linesize);
+            }
+            //提交刷新
+            ANativeWindow_unlockAndPost(window);
+        } while (0);
+
+
+    }
+    src.release();
+    gray.release();
+    env->ReleaseByteArrayElements(data_, data, 0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_scuavailable_available_OpencvJni_init(JNIEnv *env, jobject instance, jstring path_) {
+    const char *path = env->GetStringUTFChars(path_, 0);
+
+
+    //创建检测器  Ptr是智能指针，不需要关心释放
+    Ptr<CascadeClassifier> mainClassifier = makePtr<CascadeClassifier>(path);
+    Ptr<CascadeDetectorAdapter> mainDetector = makePtr<CascadeDetectorAdapter>(mainClassifier);
+
+    //创建跟踪器
+    Ptr<CascadeClassifier> trackClassifier = makePtr<CascadeClassifier>(path);
+    Ptr<CascadeDetectorAdapter> trackingDetector = makePtr<CascadeDetectorAdapter>(trackClassifier);
+
+    //开始识别，结果在CascadeDetectorAdapter中返回
+    DetectionBasedTracker::Parameters DetectorParams;
+    tracker= new DetectionBasedTracker(mainDetector, trackingDetector, DetectorParams);
+    tracker->run();
+
+    env->ReleaseStringUTFChars(path_, path);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_scuavailable_available_OpencvJni_setSurface(JNIEnv *env, jobject instance, jobject surface) {
+    if (window) {
+        ANativeWindow_release(window);
+        window = 0;
+    }
+    window = ANativeWindow_fromSurface(env, surface);
+}
+
+
+
+
+extern "C"
+JNIEXPORT jintArray JNICALL
+Java_com_scuavailable_available_util_JNIUtils_getCountPaperLocation(JNIEnv *env, jclass clazz,
+                                                                     jintArray buf, jint w,
+                                                                     jint h) {
+    jint *cbuf;
+    cbuf = env->GetIntArrayElements(buf, JNI_FALSE); // 读取输入参数
+    if (cbuf == NULL) {
+        return 0;
+    }
+    Mat src(h, w, CV_8UC4, (unsigned char*) cbuf);
+
     if (src.empty()) {
-        return src;
+        jintArray jarrtemp = env->NewIntArray(1);
+        jint *pjarrtemp = env->GetIntArrayElements(jarrtemp,NULL);
+        pjarrtemp[0] = 0;
+        env->ReleaseIntArrayElements(jarrtemp,pjarrtemp,0);
+        return jarrtemp;
     }
 
     //transform source img to gray if not
     Mat gray;
-    if (src.channels() == 3) {
-        cvtColor(src, gray, COLOR_BGR2GRAY);
-    }
-    else {
-        gray = src;
-    }
+    cvtColor(src, gray, COLOR_BGR2GRAY);
+//    if (src.channels() == 3) {
+//        cvtColor(src, gray, COLOR_BGR2GRAY);
+//    }
+//    else {
+//        gray = src;
+//    }
 
     // Apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol
     Mat bw;
@@ -198,144 +317,18 @@ cv::Mat countPaperGetImg(cv::Mat img){
     // candidate为众数 numPos为该众数的index
     // 至此每一个点及其坐标已经获得
     // candidate 为数量 piecesTargetColList[numPos]为每一点的横坐标 heightMarkList[numPos]为该区间的纵坐标范围
-    // return  TODO
-
-    // 绘制到图片上
-    int rowMark = heightMarkList[numPos].first;
-    vector<int> colMarkList = piecesTargetColList[numPos];
-    if (height > 2000) {
-        cout << height << endl;
-        for (int i = 0; i < colMarkList.size(); i++) {
-            circle(src, Point(colMarkList[i], rowMark), 5, Scalar(0, 255, 0),-1);
-            putText(src, to_string(i + 1), Point(colMarkList[i], rowMark - 5), FONT_HERSHEY_PLAIN, 2.0, Scalar(222, 86, 69), 2);
-        }
-        putText(src, "total num: "+to_string(candidate), Point(int(width*0.2), int(height*0.8)), FONT_HERSHEY_COMPLEX, 2.0, Scalar(222, 86, 69), 2);
+//    整理数据
+    int dataSize = 3+piecesTargetColList[numPos].size();
+    int retData[dataSize];
+    retData[0] = dataSize;
+    retData[1] = candidate;
+    retData[2] = (int)((heightMarkList[numPos].first+heightMarkList[numPos].second)/2);
+    copy(piecesTargetColList[numPos].begin(),piecesTargetColList[numPos].end(),retData+3);
+    jintArray jarr = env->NewIntArray(dataSize);
+    jint *pjarr = env->GetIntArrayElements(jarr,NULL);
+    for(int i = 0; i <dataSize; i++){
+        pjarr[i] = retData[i];
     }
-    else if (height > 1000) {
-        cout << height << endl;
-        for (int i = 0; i < colMarkList.size(); i++) {
-            circle(src, Point(colMarkList[i], rowMark), 3, Scalar(0, 255, 0), -1);
-            putText(src, to_string(i + 1), Point(colMarkList[i], rowMark- 5), FONT_HERSHEY_PLAIN, 1.7, Scalar(222, 86, 69), 1);
-        }
-        putText(src, "total num: " + to_string(candidate), Point(int(width * 0.2), int(height * 0.8)), FONT_HERSHEY_COMPLEX, 1.0, Scalar(222, 86, 69), 1);
-    }
-    else {
-        cout << height << endl;
-        for (int i = 0; i < colMarkList.size(); i++) {
-            circle(src, Point(colMarkList[i], rowMark), 1, Scalar(0, 255, 0), -1);
-            if (i % 2 == 0) {
-                putText(src, to_string(i + 1), Point(colMarkList[i], rowMark+10), FONT_HERSHEY_PLAIN, 0.5, Scalar(222, 86, 69), 1);
-            }
-            else {
-                putText(src, to_string(i + 1), Point(colMarkList[i], rowMark-5), FONT_HERSHEY_PLAIN, 0.5, Scalar(222, 86, 69), 1);
-
-            }
-        }
-        putText(src, "total num: " + to_string(candidate), Point(int(width * 0.2), int(height * 0.8)), FONT_HERSHEY_COMPLEX, 1.0, Scalar(222, 86, 69), 1);
-    }
-    return src;
-//    imwrite("finalresult.jpg", src);
-}
-
-
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_scuavailable_available_OpencvJni_postData(JNIEnv *env, jobject instance, jbyteArray data_,
-                                                   jint width, jint height, jint cameraId) {
-    jbyte *data = env->GetByteArrayElements(data_, NULL);
-
-    // 数据的行数也就是数据高度，因为数据类型是NV21，所以为Y+U+V的高度, 也就是height + height/4 + height/4
-    Mat src(height*3/2, width, CV_8UC1, data);
-
-    // 转RGB
-    cvtColor(src, src, COLOR_YUV2RGBA_NV21);
-    if (cameraId == 1) {// 前置摄像头
-        //逆时针旋转90度
-        rotate(src, src, ROTATE_90_COUNTERCLOCKWISE);
-        //1：水平翻转   0：垂直翻转
-        flip(src, src, 1);
-    } else {
-        //顺时针旋转90度
-        rotate(src, src, ROTATE_90_CLOCKWISE);
-
-    }
-    Mat gray;
-    //灰度化
-    cvtColor(src, gray, COLOR_RGBA2GRAY);
-    //二值化
-    equalizeHist(gray, gray);
-
-    std::vector<Rect> faces;
-    //检测图片
-    tracker->process(gray);
-    //获取CascadeDetectorAdapter中的检测结果
-    tracker->getObjects(faces);
-    //画出矩形
-    for (Rect face : faces) {
-        rectangle(src, face, Scalar(255, 0, 0));
-    }
-
-    //显示到serface
-    if (window) {
-        ANativeWindow_setBuffersGeometry(window, src.cols, src.rows, WINDOW_FORMAT_RGBA_8888);
-        ANativeWindow_Buffer window_buffer;
-        do {
-            //lock失败 直接brek出去
-            if (ANativeWindow_lock(window, &window_buffer, 0)) {
-                ANativeWindow_release(window);
-                window = 0;
-                break;
-            }
-
-            uint8_t *dst_data = static_cast<uint8_t *>(window_buffer.bits);
-            //stride : 一行多少个数据
-            //（RGBA） * 4
-            int dst_linesize = window_buffer.stride * 4;
-
-            //一行一行拷贝，src.data是图片的RGBA数据，要拷贝到dst_data中，也就是window的缓冲区里
-            for (int i = 0; i < window_buffer.height; ++i) {
-                memcpy(dst_data + i * dst_linesize, src.data + i * src.cols * 4, dst_linesize);
-            }
-            //提交刷新
-            ANativeWindow_unlockAndPost(window);
-        } while (0);
-
-
-    }
-    src.release();
-    gray.release();
-    env->ReleaseByteArrayElements(data_, data, 0);
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_scuavailable_available_OpencvJni_init(JNIEnv *env, jobject instance, jstring path_) {
-    const char *path = env->GetStringUTFChars(path_, 0);
-
-
-    //创建检测器  Ptr是智能指针，不需要关心释放
-    Ptr<CascadeClassifier> mainClassifier = makePtr<CascadeClassifier>(path);
-    Ptr<CascadeDetectorAdapter> mainDetector = makePtr<CascadeDetectorAdapter>(mainClassifier);
-
-    //创建跟踪器
-    Ptr<CascadeClassifier> trackClassifier = makePtr<CascadeClassifier>(path);
-    Ptr<CascadeDetectorAdapter> trackingDetector = makePtr<CascadeDetectorAdapter>(trackClassifier);
-
-    //开始识别，结果在CascadeDetectorAdapter中返回
-    DetectionBasedTracker::Parameters DetectorParams;
-    tracker= new DetectionBasedTracker(mainDetector, trackingDetector, DetectorParams);
-    tracker->run();
-
-    env->ReleaseStringUTFChars(path_, path);
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_scuavailable_available_OpencvJni_setSurface(JNIEnv *env, jobject instance, jobject surface) {
-    if (window) {
-        ANativeWindow_release(window);
-        window = 0;
-    }
-    window = ANativeWindow_fromSurface(env, surface);
+    env->ReleaseIntArrayElements(jarr,pjarr,0);
+    return jarr;
 }
