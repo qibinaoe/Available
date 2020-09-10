@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tv_item_scan_letter_desp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/scan_letter_description"
+        android:layout_above="@id/ib_item_scan_letter_take"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:textSize="18sp"
+        android:alpha="0.5"/>
+    <ImageButton
+        android:id="@+id/ib_item_scan_letter_take"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_take_photo"
+        android:background="@drawable/bg_scan_take"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:alpha="0.5"/>
+
+    <ImageButton
+        android:id="@+id/ib_item_scan_letter_setting"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_scan_letter_setting"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:alpha="0.5"/>
+
+</RelativeLayout>

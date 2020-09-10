@@ -29,9 +29,15 @@ import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.scuavailable.available.about.AboutActivity;
 import com.scuavailable.available.login.LoginActivity;
 import com.scuavailable.available.scan.ScanActivity;
 import com.scuavailable.available.util.CameraHelper;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
         initDrawer(savedInstanceState);
         initViews();
         initGesture();
-
     }
 
     private void initGesture() {
+
         gestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener(){
             @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
@@ -145,9 +151,16 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case 4:
                                 //分享给朋友
+                                Intent shareIntent = new Intent();
+                                shareIntent.setAction(Intent.ACTION_SEND);
+                                shareIntent.setType("text/plain");
+                                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content));
+                                shareIntent = Intent.createChooser(shareIntent, getString(R.string.share_title));
+                                startActivity(shareIntent);
                                 break;
                             case 5:
                                 //关于我们
+                                startActivity(new Intent(mContext, AboutActivity.class));
                                 break;
                             case 6:
                                 //退出登陆
@@ -231,6 +244,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     @Override
     protected void onResume() {

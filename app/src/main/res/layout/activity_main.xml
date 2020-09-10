@@ -17,36 +17,36 @@
     <RelativeLayout
         android:id="@+id/rl_main_dateinfo"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:layout_below="@id/ib_main_setting">
-        <TextView
+        <TextClock
             android:id="@+id/tv_main_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="11:23"
             android:textStyle="bold"
-            android:textSize="75sp"
+            android:textSize="65sp"
             android:textColor="@color/main_time_color"
             android:includeFontPadding="false"
+            android:format12Hour="hh:mm"
             android:layout_marginLeft="10dp"/>
-        <TextView
+        <TextClock
             android:id="@+id/tv_main_timename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:layout_marginBottom="10dp"
+            android:format12Hour="aa"
             android:layout_toRightOf="@id/tv_main_time"
             android:layout_alignBottom="@id/tv_main_time"
             android:layout_marginLeft="10dp"
-            android:text="中午"
             android:textColor="@color/main_timename_color"
             android:textStyle="bold"
             android:textSize="25sp"/>
-        <TextView
+        <TextClock
             android:id="@+id/tv_main_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2020/07/23"
+            android:format12Hour="yyyy/MM/dd"
             android:layout_below="@id/tv_main_timename"
             android:layout_alignRight="@id/tv_main_timename"
             android:textColor="@color/main_date_color"

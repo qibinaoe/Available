@@ -6,10 +6,10 @@
     <string name="drawer_item_history_desp">历史使用记录</string>
     <string name="drawer_item_help">帮助和使用说明</string>
     <string name="drawer_item_help_desp">我要如何使用这个软件</string>
-    <string name="drawer_item_share">分享给朋友</string>
-    <string name="drawer_item_share_desp">如果感觉我有用，把我分享给朋友吧</string>
+    <string name="drawer_item_share">分享</string>
+    <string name="drawer_item_share_desp">把我分享给朋友吧</string>
     <string name="drawer_item_about">关于我们</string>
-    <string name="drawer_item_about_desp">制作团队、核心人员、其他产品</string>
+    <string name="drawer_item_about_desp">产品详情</string>
     <string name="drawer_item_exit">退出登陆</string>
     <string name="drawer_item_exit_desp">注销用户、退出帐号</string>
 
@@ -22,4 +22,14 @@
     <string name="login_login_btn">登陆</string>
     <string name="login_info_error_username">账号名不能为空</string>
     <string name="login_info_error_password">密码不能为空</string>
+
+    <string name="copy_right" translatable="false">Copyrights © %1$d</string>
+    <string name="about_description">Available 一切便于教学</string>
+
+    <string name="share_title">分享给朋友</string>
+    <string name="share_content">Available试卷辅助处理系统</string>
+
+    <string name="scan_count_description">份数检测</string>
+    <string name="scan_number_description">分数统计</string>
+    <string name="scan_letter_description">客观题识别</string>
 </resources>

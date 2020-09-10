@@ -3,6 +3,7 @@ package com.scuavailable.available.scan;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 
+import com.rd.PageIndicatorView;
 import com.scuavailable.available.R;
 import com.scuavailable.available.util.Utils;
 
@@ -55,8 +57,18 @@ public class ScanActivity extends AppCompatActivity {
 
     private static String TAG = "ScanActivity";
     private Context mContext;
-    ImageButton mBackIb,mTakeIb;
+    ImageButton mBackIb;
     TextureView mTextureView;
+    ViewPager mViewPager;
+    PageIndicatorView mPageIndicatorView;
+    IndicatorPagerAdapter indicatorPagerAdapter;
+
+    ImageButton mCountTakeIb,mLetterTakeIb,mNumberTakeIb,mLetterSettingIb;
+
+    private List<View> mBottomViewList;
+
+
+
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -80,6 +92,7 @@ public class ScanActivity extends AppCompatActivity {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
+    View countInflate,letterInflate,numberInflate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,27 +101,85 @@ public class ScanActivity extends AppCompatActivity {
         Log.i(TAG,"Create");
         mContext =  this;
         initViews();
+        initPager();
+    }
+
+    private void initPager() {
+
+
+        mBottomViewList = new ArrayList<>();
+        mBottomViewList.add(countInflate);
+        mBottomViewList.add(letterInflate);
+        mBottomViewList.add(numberInflate);
+
+        indicatorPagerAdapter = new IndicatorPagerAdapter(mContext,mBottomViewList);
+        mViewPager.setAdapter(indicatorPagerAdapter);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mPageIndicatorView.setSelection(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void initViews() {
         mBackIb = findViewById(R.id.ib_scan_back);
-        mTakeIb = findViewById(R.id.ib_scan_take);
         mTextureView = findViewById(R.id.textureview_scan);
         mTextureView.setSurfaceTextureListener(textureListener);
+
+        countInflate = getLayoutInflater().inflate(R.layout.item_scan_count_bottom,null);
+        letterInflate = getLayoutInflater().inflate(R.layout.item_scan_letter_bottom,null);
+        numberInflate = getLayoutInflater().inflate(R.layout.item_scan_number_bottom,null);
+
+        mCountTakeIb=  countInflate.findViewById(R.id.ib_item_scan_count_take);
+        mLetterTakeIb  =  letterInflate.findViewById(R.id.ib_item_scan_letter_take);
+        mNumberTakeIb  = numberInflate.findViewById(R.id.ib_item_scan_number_take);
+        mLetterSettingIb = letterInflate.findViewById(R.id.ib_item_scan_letter_setting);
+
+        mViewPager = findViewById(R.id.vp_scan);
+
+        mPageIndicatorView = findViewById(R.id.pageIndicatorView);
+
         mBackIb.setOnClickListener(scanClickListener);
-        mTakeIb.setOnClickListener(scanClickListener);
+        mCountTakeIb.setOnClickListener(scanClickListener);
+        mLetterTakeIb.setOnClickListener(scanClickListener);
+        mNumberTakeIb.setOnClickListener(scanClickListener);
+        mLetterSettingIb.setOnClickListener(scanClickListener);
+
 
     }
 
     View.OnClickListener scanClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.e(TAG,"click view id" + String.valueOf(v.getId()));
+
             switch (v.getId()) {
                 case R.id.ib_scan_back:
                     finish();
                     break;
-                case R.id.ib_scan_take:
+                case R.id.ib_item_scan_count_take:
                     takePicture();
+                    break;
+                case R.id.ib_item_scan_letter_take:
+                    Toast.makeText(mContext,"ib_item_scan_letter_take",Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.ib_item_scan_number_take:
+                    Toast.makeText(mContext,"ib_item_scan_number_take",Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.ib_item_scan_letter_setting:
+                    Toast.makeText(mContext,"ib_item_scan_letter_setting",Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -240,7 +311,8 @@ public class ScanActivity extends AppCompatActivity {
                     Log.e(TAG,mFilename);
                     File fileFolder = new File(mFileFolderName);
                     if(!fileFolder.exists()){
-                        fileFolder.mkdir();
+                        Log.e(TAG,"create filedirectory");
+                        fileFolder.mkdirs();
                     }
                     File jpgFile = new File(fileFolder,mFilename);
                     OutputStream output = null;
@@ -326,8 +398,11 @@ public class ScanActivity extends AppCompatActivity {
 
 
             // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(ScanActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+             {
+                ActivityCompat.requestPermissions(ScanActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);

@@ -64,8 +64,11 @@ public class PaperCountActivity extends AppCompatActivity {
         String filefolder = extras.getString("filefolder");
 
 
-        Bitmap bmp = BitmapFactory.decodeFile(filefolder+filename);
-        mNalBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.count);
+        mNalBitmap = BitmapFactory.decodeFile(filefolder+filename);
+        if(mNalBitmap == null){
+            Log.e(TAG,"this is none");
+        }
+//        mNalBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.count);
         mPhotoView.setImageBitmap(mNalBitmap);
         mPhotoView.setOnMatrixChangeListener(new MatrixChangeListener());
         mPhotoView.setOnPhotoTapListener(new PhotoTapListener());
@@ -105,7 +108,7 @@ public class PaperCountActivity extends AppCompatActivity {
 
         Canvas canvas = new Canvas(mutableBitmap);
         for (int i = 0; i < dotList.size(); i++) {
-            canvas.drawCircle(dotList.get(i).x, dotList.get(i).y, 3, dotPaint);
+            canvas.drawCircle(dotList.get(i).x, dotList.get(i).y, 8, dotPaint);
         }
 
         mPhotoView.setImageBitmap(mutableBitmap);
@@ -180,7 +183,7 @@ public class PaperCountActivity extends AppCompatActivity {
     }
 
     private boolean isDotIntersect(Point p1,Point p2){
-        int distanceThreshold = 4;
+        int distanceThreshold = 8;
         Log.e(TAG,"p1 x "+ String.valueOf(p1.x) + " p1 y" + String.valueOf(p1.y) );
         Log.e(TAG,"p2 x "+ String.valueOf(p1.x) + " p2 y" + String.valueOf(p1.y) );
         int d1 = (p1.x - p2.x);
