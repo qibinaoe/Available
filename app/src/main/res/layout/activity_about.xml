@@ -9,12 +9,10 @@
 
     <RelativeLayout
         android:id="@+id/rl_about"
+        android:paddingTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <ImageButton
-        android:id="@+id/ib_about_back"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/ic_back" />
+    <include layout="@layout/layout_about_nav"/>
+
+
 </RelativeLayout>

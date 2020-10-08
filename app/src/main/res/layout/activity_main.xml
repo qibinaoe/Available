@@ -63,7 +63,7 @@
                 android:id="@+id/tv_main_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="江安校区"
+                android:text="XXXXX"
                 android:textColor="@color/main_location_color"
                 android:textSize="20sp"
                 android:textStyle="bold"/>

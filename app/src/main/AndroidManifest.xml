@@ -5,19 +5,29 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-feature android:name="android.hardware.camera2.full" />
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.front" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".base.UniteApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/TranslucentTheme"
-        android:requestLegacyExternalStorage="true">
-
-        <activity android:name=".about.AboutActivity"></activity>
+        android:usesCleartextTraffic="true">
+        <activity android:name=".school.ViewPaperDetailActivity"></activity>
+        <activity android:name=".school.RequestModifyActivity" />
+        <activity android:name=".register.RegisterActivity" />
+        <activity android:name=".about.AboutActivity" />
         <activity android:name=".scan.PaperCountActivity" />
         <activity android:name=".scan.ScanActivity" />
         <activity android:name=".login.LoginActivity" />

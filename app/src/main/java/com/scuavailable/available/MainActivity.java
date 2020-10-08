@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,28 +21,19 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.scuavailable.available.about.AboutActivity;
 import com.scuavailable.available.login.LoginActivity;
 import com.scuavailable.available.scan.ScanActivity;
-import com.scuavailable.available.util.CameraHelper;
+import com.scuavailable.available.school.ViewPaperDetailActivity;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivityTestHere";
-    private OpencvJni openCvJni;
-    private CameraHelper cameraHelper;
 
     //Drawer
     private AccountHeader headerResult = null;
@@ -75,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        openCvJni = new OpencvJni();
 
         //判断是否登陆，根据登陆情况呈现drawer页面
         user_pref = getSharedPreferences("user_pref", MODE_PRIVATE);
@@ -142,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
                         switch (id){
                             case 1:
                                 //教务处页面
+                                startActivity(new Intent(mContext, ViewPaperDetailActivity.class));
+
                                 break;
                             case 2:
                                 //查看历史记录

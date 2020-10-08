@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextureView
+    <com.scuavailable.available.customizedView.AutoFitTextureView
         android:id="@+id/textureview_scan"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.rd.PageIndicatorView;
 import com.scuavailable.available.R;
+import com.scuavailable.available.customizedView.AutoFitTextureView;
 import com.scuavailable.available.util.Utils;
 
 import java.io.File;
@@ -58,7 +59,7 @@ public class ScanActivity extends AppCompatActivity {
     private static String TAG = "ScanActivity";
     private Context mContext;
     ImageButton mBackIb;
-    TextureView mTextureView;
+    AutoFitTextureView mTextureView;
     ViewPager mViewPager;
     PageIndicatorView mPageIndicatorView;
     IndicatorPagerAdapter indicatorPagerAdapter;

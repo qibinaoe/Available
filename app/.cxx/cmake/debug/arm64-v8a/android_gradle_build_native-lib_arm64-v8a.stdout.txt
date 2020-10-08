@@ -1,0 +1,4 @@
+ninja: Entering directory `D:\Users\admin\AndroidStudioProjects\Available\app\.cxx\cmake\debug\arm64-v8a'
+[1/2] Building CXX object CMakeFiles/native-lib.dir/native-lib.cpp.o
+clang++: warning: argument unused during compilation: '-LD:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/libs/arm64-v8a' [-Wunused-command-line-argument]
+[2/2] Linking CXX shared library D:\Users\admin\AndroidStudioProjects\Available\app\build\intermediates\cmake\debug\obj\arm64-v8a\libnative-lib.so

@@ -46,7 +46,7 @@ public class AboutActivity extends AppCompatActivity {
                 .addGroup("Connect with us")
                 .addEmail("qibin@stu.scu.edu.cn")
                 .addWebsite("http://scu.edu.cn/")
-                .addItem(getCopyRightsElement())
+//                .addItem(getCopyRightsElement())
                 .create();
 
         aboutRl.addView(aboutPage)  ;

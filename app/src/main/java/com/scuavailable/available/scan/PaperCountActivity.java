@@ -68,7 +68,7 @@ public class PaperCountActivity extends AppCompatActivity {
         if(mNalBitmap == null){
             Log.e(TAG,"this is none");
         }
-//        mNalBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.count);
+//        mNalBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.test);
         mPhotoView.setImageBitmap(mNalBitmap);
         mPhotoView.setOnMatrixChangeListener(new MatrixChangeListener());
         mPhotoView.setOnPhotoTapListener(new PhotoTapListener());
@@ -108,7 +108,7 @@ public class PaperCountActivity extends AppCompatActivity {
 
         Canvas canvas = new Canvas(mutableBitmap);
         for (int i = 0; i < dotList.size(); i++) {
-            canvas.drawCircle(dotList.get(i).x, dotList.get(i).y, 8, dotPaint);
+            canvas.drawCircle(dotList.get(i).x, dotList.get(i).y, 15, dotPaint);
         }
 
         mPhotoView.setImageBitmap(mutableBitmap);
@@ -117,6 +117,9 @@ public class PaperCountActivity extends AppCompatActivity {
     }
 
     private void countBitmap(Bitmap bmp) {
+        int onePointDistance = 15;
+        int lastX = 0;
+        int thisX = -1;
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         int[] pix = new int[width * height];
@@ -126,6 +129,10 @@ public class PaperCountActivity extends AppCompatActivity {
             Log.e(TAG,"DOTS LENGTH:" + String.valueOf(resultDots.length));
             int dotY = resultDots[2];
             for (int i = 3; i < resultDots.length; i++) {
+                if(Math.abs(resultDots[i]-lastX)<onePointDistance){
+                    continue;
+                }
+                lastX = resultDots[i];
                 Point p = new Point(resultDots[i],dotY);
                 dotList.add(p);
                 Log.e(TAG,"first dot : X"+ String.valueOf(p.x) + "Y:" + String.valueOf(p.y));
@@ -183,11 +190,11 @@ public class PaperCountActivity extends AppCompatActivity {
     }
 
     private boolean isDotIntersect(Point p1,Point p2){
-        int distanceThreshold = 8;
+        int distanceThreshold = 20;
         Log.e(TAG,"p1 x "+ String.valueOf(p1.x) + " p1 y" + String.valueOf(p1.y) );
         Log.e(TAG,"p2 x "+ String.valueOf(p1.x) + " p2 y" + String.valueOf(p1.y) );
-        int d1 = (p1.x - p2.x);
-        int d2 = (p1.y - p2.y);
+        int d1 = Math.abs(p1.x - p2.x);
+        int d2 = Math.abs(p1.y - p2.y);
         Log.e(TAG,"d1   "+ String.valueOf(d1) + " d2  " + String.valueOf(d2) );
 
         if(d1 <= distanceThreshold && d2 <= distanceThreshold){

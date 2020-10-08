@@ -1,4 +1,4 @@
-package com.scuavailable.available.login;
+package com.scuavailable.available.register;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,57 +9,50 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.scuavailable.available.MainActivity;
 import com.scuavailable.available.R;
 import com.scuavailable.available.db.DBManager;
-import com.scuavailable.available.register.RegisterActivity;
+import com.scuavailable.available.login.LoginActivity;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     ImageButton backIb;
     ImageButton mDeleteUserNameIb;
-    EditText usernameEt,passwordEt;
-    Button loginBtn,registerBtn;
+    EditText usernameEt,passwordEt, passwordAgainEt;
+    Button registerBtn;
     private Context mContext;
-    private SharedPreferences user_pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         mContext = this;
         initViews();
     }
 
 
+
+
+
     private void initViews() {
-        mDeleteUserNameIb = findViewById(R.id.ib_delete_username);
-        usernameEt = findViewById(R.id.et_login_username);
-        passwordEt = findViewById(R.id.et_password);
-        backIb = findViewById(R.id.ib_login_back);
-        loginBtn = findViewById(R.id.btn_login);
-        registerBtn = findViewById(R.id.btn_jump_register);
+        mDeleteUserNameIb = findViewById(R.id.ib_regiter_delete_username);
+        usernameEt = findViewById(R.id.et_register_username);
+        passwordEt = findViewById(R.id.et_register_password);
+        passwordAgainEt = findViewById(R.id.et_register_password_again);
+        backIb = findViewById(R.id.ib_register_back);
+        registerBtn = findViewById(R.id.btn_register);
+
         //设置返回监听
         backIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(mContext, MainActivity.class));
-                finish();
-            }
-        });
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(mContext, RegisterActivity.class));
                 finish();
             }
         });
@@ -110,41 +103,43 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //设置登陆
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //判断网络是否可用
-                login();
+                //判断网络是否可用
+                register();
             }
         });
     }
 
-    private void login() {
+    private void register() {
         String username = usernameEt.getText().toString();
         String password = passwordEt.getText().toString();
+        String passwordAgain = passwordAgainEt.getText().toString();
+
         if(TextUtils.isEmpty(username)){
-            Toast.makeText(mContext,R.string.login_info_error_username,Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext,R.string.register_info_error_username,Toast.LENGTH_SHORT).show();
             return;
         }
         if(TextUtils.isEmpty(password)){
-            Toast.makeText(mContext,R.string.login_info_error_password,Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext,R.string.register_info_error_password,Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(TextUtils.isEmpty(passwordAgain)){
+            Toast.makeText(mContext,R.string.register_info_error_password_again,Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!TextUtils.equals(password,passwordAgain)){
+            Toast.makeText(mContext,R.string.register_info_error_password_not_same,Toast.LENGTH_SHORT).show();
             return;
         }
         //检验账户密码是否正确
         //跳转主界面 记录登陆状态
-        if(!DBManager.checkPassword(username,password)){
-            Toast.makeText(mContext,R.string.login_info_error_account,Toast.LENGTH_SHORT).show();
-            return;
-        }
-        user_pref = getSharedPreferences("user_pref", Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = user_pref.edit();
-        edit.putString("username",username);
-        edit.putBoolean("login_status",true);
-        edit.commit();
-        Intent intent = new Intent(mContext, MainActivity.class);
+        //注册到数据库当中
+        DBManager.addUser(username,password);
+
+        Intent intent = new Intent(mContext, LoginActivity.class);
         startActivity(intent);
         finish();
     }
-
-
 }
