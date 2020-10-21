@@ -1,4 +1,4 @@
-package com.btechviral.mnistapp;
+package com.scuavailable.available.scan;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
@@ -14,10 +14,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Classifier {
-    private static final String LOG_TAG = Classifier.class.getSimpleName();
+public class LetterClassifier {
+    private static final String LOG_TAG = LetterClassifier.class.getSimpleName();
 
     private static final String MODEL_NAME = "emnist.tflite";
 
@@ -33,14 +34,14 @@ public class Classifier {
     private final int[] mImagePixels = new int[IMG_HEIGHT * IMG_WIDTH];
     private final float[][] mResult = new float[1][NUM_CLASSES];
 
-    public Classifier(Activity activity) throws IOException {
+    public LetterClassifier(Activity activity) throws IOException {
         mInterpreter = new Interpreter(loadModelFile(activity), options);
         mImageData = ByteBuffer.allocateDirect(
                 4 * BATCH_SIZE * IMG_HEIGHT * IMG_WIDTH * NUM_CHANNEL);
         mImageData.order(ByteOrder.nativeOrder());
     }
 
-    public Result classify(Bitmap bitmap) {
+    public LetterResult classify(Bitmap bitmap, ArrayList<Integer> probsRange) {
         convertBitmapToByteBuffer(bitmap);
         long startTime = SystemClock.uptimeMillis();
         mInterpreter.run(mImageData, mResult);
@@ -48,7 +49,7 @@ public class Classifier {
         long timeCost = endTime - startTime;
         Log.v(LOG_TAG, "classify(): result = " + Arrays.toString(mResult[0])
                 + ", timeCost = " + timeCost);
-        return new Result(mResult[0], timeCost);
+        return new LetterResult(mResult[0], timeCost,probsRange);
     }
 
     private MappedByteBuffer loadModelFile(Activity activity) throws IOException {

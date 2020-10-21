@@ -34,13 +34,13 @@ public class PaperCountActivity extends AppCompatActivity {
 
     private static String TAG = "PaperCountActivity";
     ImageButton mBackIb;
-    private TextView mCurrMatrixTv;
+//    private TextView mCurrMatrixTv;
     private TextView mCountNumberTv;
-    private Matrix mCurrentDisplayMatrix = null;
+//    private Matrix mCurrentDisplayMatrix = null;
 
-    static final String PHOTO_TAP_TOAST_STRING = "Photo Tap! X: %.2f %% Y:%.2f %% ID: %d";
-    static final String SCALE_TOAST_STRING = "Scaled to: %.2ff";
-    static final String FLING_LOG_STRING = "Fling velocityX: %.2f, velocityY: %.2f";
+//    static final String PHOTO_TAP_TOAST_STRING = "Photo Tap! X: %.2f %% Y:%.2f %% ID: %d";
+//    static final String SCALE_TOAST_STRING = "Scaled to: %.2ff";
+//    static final String FLING_LOG_STRING = "Fling velocityX: %.2f, velocityY: %.2f";
     static final String INDICATE_COUNT_NUMBER = "共有 %d 张";
     private PhotoView mPhotoView;
     private Bitmap mNalBitmap;
@@ -56,21 +56,21 @@ public class PaperCountActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        mCurrMatrixTv = findViewById(R.id.tv_current_matrix);
+//        mCurrMatrixTv = findViewById(R.id.tv_current_matrix);
         mCountNumberTv = findViewById(R.id.tv_count_number);
         mPhotoView = (PhotoView) findViewById(R.id.photo_view_count);
         Bundle extras = getIntent().getExtras();
-        String filename = extras.getString("filename");
-        String filefolder = extras.getString("filefolder");
+//        String filename = extras.getString("filename");
+//        String filefolder = extras.getString("filefolder");
+        String filepath = extras.getString("filepath");
 
-
-        mNalBitmap = BitmapFactory.decodeFile(filefolder+filename);
+        mNalBitmap = BitmapFactory.decodeFile(filepath);
         if(mNalBitmap == null){
             Log.e(TAG,"this is none");
         }
 //        mNalBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.test);
         mPhotoView.setImageBitmap(mNalBitmap);
-        mPhotoView.setOnMatrixChangeListener(new MatrixChangeListener());
+//        mPhotoView.setOnMatrixChangeListener(new MatrixChangeListener());
         mPhotoView.setOnPhotoTapListener(new PhotoTapListener());
         countBitmap(mNalBitmap);
         drawBitmap();
@@ -182,12 +182,12 @@ public class PaperCountActivity extends AppCompatActivity {
 
 
 
-    private class MatrixChangeListener implements OnMatrixChangedListener {
-        @Override
-        public void onMatrixChanged(RectF rect) {
-            mCurrMatrixTv.setText(rect.toString());
-        }
-    }
+//    private class MatrixChangeListener implements OnMatrixChangedListener {
+//        @Override
+//        public void onMatrixChanged(RectF rect) {
+//            mCurrMatrixTv.setText(rect.toString());
+//        }
+//    }
 
     private boolean isDotIntersect(Point p1,Point p2){
         int distanceThreshold = 20;

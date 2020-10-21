@@ -8,7 +8,7 @@
     <com.scuavailable.available.customizedView.AutoFitTextureView
         android:id="@+id/textureview_scan"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <ImageButton
         android:id="@+id/ib_scan_back"
@@ -17,7 +17,32 @@
         android:layout_margin="20dp"
         android:background="@drawable/ic_back" />
 
-    
+    <View
+        android:id="@+id/view_upper_ROI_line_scan"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/main_vertical_line"
+        android:visibility="gone"/>
+    <View
+        android:id="@+id/view_lower_ROI_line_scan"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/main_vertical_line"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/view_vertical_ROI_line_scan"
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@color/main_vertical_line"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_display_scan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_scan"
         android:layout_width="match_parent"
@@ -38,6 +63,7 @@
         app:piv_selectedColor="@color/gray_50"
         app:piv_unselectedColor="@color/gray_300"
       />
+
 
 
 

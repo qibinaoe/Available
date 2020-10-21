@@ -5,6 +5,7 @@
       "sdkFolder": "C:\\Users\\admin\\AppData\\Local\\Android\\Sdk",
       "isNativeCompilerSettingsCacheEnabled": false,
       "isBuildOnlyTargetAbiEnabled": true,
+      "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
       "splitsAbiFilterSet": [],
       "intermediatesFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates",
       "gradleModulePathName": ":app",
@@ -34,7 +35,7 @@
     ],
     "cFlagList": [],
     "cppFlagsList": [
-      "-std\u003dc++11"
+      "-std\u003dc++11 -frtti -fexceptions"
     ],
     "variantName": "debug",
     "soFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates\\cmake\\debug\\lib",
@@ -43,8 +44,8 @@
     "gradleBuildOutputFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\.cxx\\cxx\\debug",
     "isDebuggableEnabled": true,
     "validAbiList": [
-      "ARMEABI_V7A",
-      "ARM64_V8A"
+      "ARM64_V8A",
+      "ARMEABI_V7A"
     ],
     "buildTargetSet": []
   },

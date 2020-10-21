@@ -7,7 +7,7 @@
     >
 
     <ImageButton
-        android:id="@+id/ib_login_back"
+        android:id="@+id/ib_request_modify_back"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/ic_cancle"

@@ -11,7 +11,7 @@ import java.io.InputStream;
  * @author Lance
  * @date 2018/10/14
  */
-public class Utils {
+public class AvaUtils {
 
     public static void copyAssets(Context context, String path) {
         File model = new File(path);

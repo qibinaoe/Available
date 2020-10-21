@@ -34,7 +34,7 @@
     ],
     "cFlagList": [],
     "cppFlagsList": [
-      "-std\u003dc++11"
+      "-std\u003dc++11 -frtti -fexceptions"
     ],
     "variantName": "release",
     "soFolder": "D:\\Users\\admin\\AndroidStudioProjects\\Available\\app\\build\\intermediates\\cmake\\release\\lib",

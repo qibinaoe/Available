@@ -9,8 +9,9 @@
         android:text="@string/scan_count_description"
         android:layout_above="@id/ib_item_scan_count_take"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:textColor="@color/white"
         android:alpha="0.5"/>
     <ImageButton
         android:id="@+id/ib_item_scan_count_take"

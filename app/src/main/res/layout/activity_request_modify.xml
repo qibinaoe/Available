@@ -37,7 +37,7 @@
         android:textColorHint="@color/login_input_hint_color"
         android:textSize="16sp" />
     <EditText
-        android:id="@+id/et_request_modify_course_order"
+        android:id="@+id/et_request_modify_section"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
@@ -48,18 +48,18 @@
         android:textColor="@color/login_input_color"
         android:textColorHint="@color/login_input_hint_color"
         android:textSize="16sp" />
-    <EditText
-    android:id="@+id/et_request_modify_year"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:layout_gravity="center_horizontal"
-    android:background="@android:color/transparent"
-    android:layout_marginLeft="18dp"
-    android:hint="请输入考试年份"
-    android:maxLines="1"
-    android:textColor="@color/login_input_color"
-    android:textColorHint="@color/login_input_hint_color"
-    android:textSize="16sp" />
+<!--    <EditText-->
+<!--    android:id="@+id/et_request_modify_year"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="48dp"-->
+<!--    android:layout_gravity="center_horizontal"-->
+<!--    android:background="@android:color/transparent"-->
+<!--    android:layout_marginLeft="18dp"-->
+<!--    android:hint="请输入考试年份"-->
+<!--    android:maxLines="1"-->
+<!--    android:textColor="@color/login_input_color"-->
+<!--    android:textColorHint="@color/login_input_hint_color"-->
+<!--    android:textSize="16sp" />-->
 
 
 

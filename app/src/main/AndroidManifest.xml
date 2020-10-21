@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/TranslucentTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".school.ViewPaperDetailActivity"></activity>
+        <activity android:name=".scan.LetterSettingActivity"></activity>
+        <activity android:name=".school.ViewPaperDetailActivity" />
         <activity android:name=".school.RequestModifyActivity" />
         <activity android:name=".register.RegisterActivity" />
         <activity android:name=".about.AboutActivity" />

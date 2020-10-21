@@ -47,4 +47,9 @@
     <string name="scan_letter_description">客观题识别</string>
 
     <string name="request_modify_title">查询成绩申请</string>
+
+    <string name="scan_letter_setting_title">设置客观题答案</string>
+    <string name="letter_setting_confirm">确认</string>
+
+
 </resources>

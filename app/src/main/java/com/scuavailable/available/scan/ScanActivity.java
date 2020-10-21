@@ -1,6 +1,7 @@
 package com.scuavailable.available.scan;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -9,8 +10,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -32,14 +35,22 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.rd.PageIndicatorView;
 import com.scuavailable.available.R;
 import com.scuavailable.available.customizedView.AutoFitTextureView;
-import com.scuavailable.available.util.Utils;
+import com.scuavailable.available.util.AvaUtils;
+
+import org.checkerframework.common.value.qual.StringVal;
+import org.opencv.osgi.OpenCVNativeLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,14 +68,26 @@ import java.util.List;
 public class ScanActivity extends AppCompatActivity {
 
     private static String TAG = "ScanActivity";
+    public enum ScanMode{
+        COUNTMODE,LETTERMODE,NUMBERMODE;
+    }
+    private boolean runDigitClassifier = false;
+    private boolean runLetterClassifier = false;
+
+    int LETTER_SETTING_REQUEST_CODE = 1;
+    int LETTER_SETTING_OK = 100;
+    //
+    private ScanMode MODE_CODE = ScanMode.COUNTMODE;
     private Context mContext;
     ImageButton mBackIb;
     AutoFitTextureView mTextureView;
     ViewPager mViewPager;
     PageIndicatorView mPageIndicatorView;
     IndicatorPagerAdapter indicatorPagerAdapter;
-
-    ImageButton mCountTakeIb,mLetterTakeIb,mNumberTakeIb,mLetterSettingIb;
+    ImageView mDisplayIv;
+    View mUpperLine,mLowerLine,mVerticalLine;
+    TextView mIndexTv;
+    ImageButton mCountTakeIb,mLetterTakeIb,mNumberTakeIb,mLetterSettingIb,mLetterNextIb;
 
     private List<View> mBottomViewList;
 
@@ -89,20 +112,64 @@ public class ScanActivity extends AppCompatActivity {
     private String mFileFolderName;
     private String mFilename;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
     View countInflate,letterInflate,numberInflate;
 
+    private DigitProcessService digitProcessService;
+    private LetterProcessService letterProcessService;
+
+
+    private final Object lock = new Object();
+    private static float canvasWidth = 100;
+    private static float canvasHeight = 100;
+
+    ArrayList<Character> rightAnswers;
+    ArrayList<Character> rightAnswersSection;
+    int answerIndex = 0;
+    int ANSWER_NUM_PER_LINE = 5;
+    ArrayList<Integer> answersRange;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+        new OpenCVNativeLoader().init();
         Log.i(TAG,"Create");
         mContext =  this;
         initViews();
+        initData();
         initPager();
+        initService();
+
+    }
+
+    private void initData() {
+        rightAnswers = new ArrayList<Character>();
+        rightAnswers.add('A');
+        rightAnswers.add('B');
+        rightAnswers.add('C');
+        rightAnswers.add('D');
+        rightAnswers.add('A');
+        rightAnswersSection = new ArrayList<Character>();
+        rightAnswersSection.add('A');
+        rightAnswersSection.add('B');
+        rightAnswersSection.add('C');
+        rightAnswersSection.add('D');
+        rightAnswersSection.add('A');
+        answersRange = new ArrayList<Integer>();
+        answersRange.add(0);
+        answersRange.add(1);
+        answersRange.add(2);
+        answersRange.add(3);
+        answerIndex = 0;
+        configAnswerSection();
+    }
+
+    private void initService() {
+            letterProcessService = new LetterProcessService(this);
+            digitProcessService = new DigitProcessService(mContext);
     }
 
     private void initPager() {
@@ -124,7 +191,34 @@ public class ScanActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                Log.e(TAG,"positon::" + String.valueOf(position));
+
                 mPageIndicatorView.setSelection(position);
+
+                switch (position){
+                    case 0:
+                        Log.e(TAG,"份数检测模式");
+                        stopCurrentMode();
+                        startCountMode();
+                        //份数检测
+                        break;
+                    case 1:
+                        Log.e(TAG,"客观题模式");
+                        stopCurrentMode();
+                        startLetterMode();
+                        //客观题识别
+                        break;
+                    case 2:
+                        //分数统计
+                        Log.e(TAG,"分数统计模式");
+                        stopCurrentMode();
+                        startNumberMode();
+                        break;
+                    default:
+                        Log.e(TAG,"default模式");
+                        break;
+
+                }
             }
 
             @Override
@@ -134,9 +228,74 @@ public class ScanActivity extends AppCompatActivity {
         });
     }
 
+    private void stopCurrentMode() {
+
+        mUpperLine.setVisibility(View.GONE);
+        mLowerLine.setVisibility(View.GONE);
+        mDisplayIv.setVisibility(View.GONE);
+        mVerticalLine.setVisibility(View.GONE);
+        mDisplayIv.setImageDrawable(null);
+
+    }
+
+    private void startLetterMode() {
+
+        MODE_CODE = ScanMode.LETTERMODE;
+
+        int upperHeight = (int)(mTextureView.getHeight()*0.20);
+        int lowerHeight = (int)(mTextureView.getHeight()*0.28);
+        int leftWidth = (int)(mTextureView.getWidth()*0.20);
+
+        int verticalHeight = lowerHeight-upperHeight;
+        RelativeLayout.LayoutParams params =(RelativeLayout.LayoutParams) mVerticalLine.getLayoutParams();
+        params.height = verticalHeight;
+        mVerticalLine.setLayoutParams(params);
+        mVerticalLine.setTranslationY(upperHeight);
+        mVerticalLine.setTranslationX(leftWidth);
+        mUpperLine.setTranslationY(upperHeight);
+        mLowerLine.setTranslationY(lowerHeight);
+
+        mUpperLine.setVisibility(View.VISIBLE);
+        mLowerLine.setVisibility(View.VISIBLE);
+        mDisplayIv.setVisibility(View.VISIBLE);
+        mVerticalLine.setVisibility(View.VISIBLE);
+
+
+    }
+
+    private void startCountMode() {
+        MODE_CODE = ScanMode.COUNTMODE;
+
+    }
+
+    private void startNumberMode() {
+        MODE_CODE = ScanMode.NUMBERMODE;
+        int upperHeight = (int)(mTextureView.getHeight()*0.13);
+        int lowerHeight = (int)(mTextureView.getHeight()*0.18);
+        mUpperLine.setTranslationY(upperHeight);
+        mLowerLine.setTranslationY(lowerHeight);
+        mUpperLine.setVisibility(View.VISIBLE);
+        mLowerLine.setVisibility(View.VISIBLE);
+        mDisplayIv.setVisibility(View.VISIBLE);
+        Log.e(TAG,"upper " + String.valueOf(upperHeight) + "lower " + String.valueOf(lowerHeight));
+
+
+//        BitmapFactory.Options opts = new BitmapFactory.Options();
+//        opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.test_digit,opts);
+//        digitProcessService.processFrame(bitmap);
+
+    }
+
     private void initViews() {
         mBackIb = findViewById(R.id.ib_scan_back);
         mTextureView = findViewById(R.id.textureview_scan);
+
+        mDisplayIv = findViewById(R.id.iv_display_scan);
+        mUpperLine = findViewById(R.id.view_upper_ROI_line_scan);
+        mLowerLine = findViewById(R.id.view_lower_ROI_line_scan);
+        mVerticalLine = findViewById(R.id.view_vertical_ROI_line_scan);
+
         mTextureView.setSurfaceTextureListener(textureListener);
 
         countInflate = getLayoutInflater().inflate(R.layout.item_scan_count_bottom,null);
@@ -147,6 +306,8 @@ public class ScanActivity extends AppCompatActivity {
         mLetterTakeIb  =  letterInflate.findViewById(R.id.ib_item_scan_letter_take);
         mNumberTakeIb  = numberInflate.findViewById(R.id.ib_item_scan_number_take);
         mLetterSettingIb = letterInflate.findViewById(R.id.ib_item_scan_letter_setting);
+        mLetterNextIb = letterInflate.findViewById(R.id.ib_item_scan_letter_next);
+        mIndexTv = letterInflate.findViewById(R.id.tv_item_scan_letter_index);
 
         mViewPager = findViewById(R.id.vp_scan);
 
@@ -157,9 +318,12 @@ public class ScanActivity extends AppCompatActivity {
         mLetterTakeIb.setOnClickListener(scanClickListener);
         mNumberTakeIb.setOnClickListener(scanClickListener);
         mLetterSettingIb.setOnClickListener(scanClickListener);
-
+        mLetterNextIb.setOnClickListener(scanClickListener);
 
     }
+
+
+
 
     View.OnClickListener scanClickListener = new View.OnClickListener() {
         @Override
@@ -171,21 +335,87 @@ public class ScanActivity extends AppCompatActivity {
                     finish();
                     break;
                 case R.id.ib_item_scan_count_take:
-                    takePicture();
+//                    takePicture();
+                    paperCount();
                     break;
                 case R.id.ib_item_scan_letter_take:
-                    Toast.makeText(mContext,"ib_item_scan_letter_take",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext,"ib_item_scan_letter_take",Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.ib_item_scan_number_take:
-                    Toast.makeText(mContext,"ib_item_scan_number_take",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext,"ib_item_scan_number_take",Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.ib_item_scan_letter_setting:
-                    Toast.makeText(mContext,"ib_item_scan_letter_setting",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext,"ib_item_scan_letter_setting",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(mContext, LetterSettingActivity.class);
+                    startActivityForResult(intent,LETTER_SETTING_REQUEST_CODE);
+                    break;
+                case R.id.ib_item_scan_letter_next:
+                    configAnswerSection();
                     break;
             }
         }
     };
 
+    private void paperCount() {
+        if ( cameraDevice == null) {
+            return;
+        }
+
+        Bitmap bitmap = mTextureView.getBitmap();
+        String path = storeImage(bitmap);
+        Intent intent = new Intent(mContext, PaperCountActivity.class);
+        intent.putExtra("filepath",path);
+        startActivity(intent);
+    }
+
+    private String storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d(TAG,
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return null;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            Log.e(TAG,"SAVE IT !"+pictureFile);
+            fos.close();
+            Log.e(TAG,pictureFile.getAbsolutePath()+"  " + pictureFile.getName() + "  "+ pictureFile.getPath()  );
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }finally {
+            return pictureFile.getPath();
+        }
+
+    }
+
+    /** Create a File for saving an image or video */
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + getApplicationContext().getPackageName()
+                + "/Files");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="Available_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
+    }
 
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -233,21 +463,43 @@ public class ScanActivity extends AppCompatActivity {
             createCameraPreview();
         }
     };
+
     protected void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+
+        runDigitClassifier = false;
+        runLetterClassifier = false;
+        if(MODE_CODE == ScanMode.NUMBERMODE){
+            synchronized (lock) {
+                runDigitClassifier = true;
+            }
+        }
+        if(MODE_CODE == ScanMode.LETTERMODE){
+            synchronized (lock) {
+                runLetterClassifier = true;
+            }
+        }
+        mBackgroundHandler.post(periodicClassify);
     }
+
     protected void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
         try {
             mBackgroundThread.join();
             mBackgroundThread = null;
             mBackgroundHandler = null;
+            synchronized (lock) {
+                runDigitClassifier = false;
+                runLetterClassifier = false;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
+
+
     protected void takePicture() {
         if(null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
@@ -307,7 +559,7 @@ public class ScanActivity extends AppCompatActivity {
                     Date date = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     mFilename = "paper" +format.format(date) + ".jpg";
-                    mFileFolderName = Utils.getCachePath(mContext) + "/paperCount/";
+                    mFileFolderName = AvaUtils.getCachePath(mContext) + "/paperCount/";
                     Log.e(TAG,mFileFolderName);
                     Log.e(TAG,mFilename);
                     File fileFolder = new File(mFileFolderName);
@@ -387,6 +639,7 @@ public class ScanActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         Log.e(TAG, "is camera open");
@@ -453,6 +706,7 @@ public class ScanActivity extends AppCompatActivity {
         } else {
             mTextureView.setSurfaceTextureListener(textureListener);
         }
+
     }
     @Override
     protected void onPause() {
@@ -461,4 +715,135 @@ public class ScanActivity extends AppCompatActivity {
         stopBackgroundThread();
         super.onPause();
     }
+
+
+    private Runnable periodicClassify =
+            new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (lock) {
+                        if (MODE_CODE == ScanMode.NUMBERMODE) {
+//                            Log.e(TAG,"NUMBERperiodicClassify");
+                            classifyNumberFrame();
+                        }
+                        if(MODE_CODE == ScanMode.LETTERMODE){
+//                            Log.e(TAG,"LetterRperiodicClassify");
+                            classifyLetterFrame();
+                        }
+                    }
+                    mBackgroundHandler.post(periodicClassify);
+                }
+            };
+
+    private void classifyLetterFrame() {
+        if (letterProcessService == null  || cameraDevice == null) {
+//            Log.e(TAG,"classifyError");
+            return;
+        }
+
+        Bitmap bitmap = mTextureView.getBitmap();
+        canvasWidth = mTextureView.getWidth();
+        canvasHeight = mTextureView.getHeight();
+        mDisplayIv.getLayoutParams().width = mTextureView.getWidth();
+        mDisplayIv.getLayoutParams().height = mTextureView.getHeight();
+
+        final Bitmap processedBitmap = letterProcessService.processFrame(bitmap, canvasWidth, canvasHeight,rightAnswersSection,answersRange);
+        bitmap.recycle();
+        if(processedBitmap != null){
+//            Log.e(TAG,"LETTER NOT NULL");
+            mDisplayIv.post(new Runnable() {
+                @Override
+                public void run() {
+                    mDisplayIv.setImageBitmap(processedBitmap);
+                }
+            });
+        }else{
+//            Log.e(TAG,"LETTER NULL");
+        }
+    }
+
+    private void classifyNumberFrame() {
+        if (digitProcessService == null  || cameraDevice == null) {
+//            Log.e(TAG,"classifyError");
+            return;
+        }
+
+        Bitmap bitmap = mTextureView.getBitmap();
+        canvasWidth = mTextureView.getWidth();
+        canvasHeight = mTextureView.getHeight();
+        mDisplayIv.getLayoutParams().width = mTextureView.getWidth();
+        mDisplayIv.getLayoutParams().height = mTextureView.getHeight();
+
+        final Bitmap processedBitmap = digitProcessService.processFrame(bitmap, canvasWidth, canvasHeight);
+        bitmap.recycle();
+        if(processedBitmap != null){
+            mDisplayIv.post(new Runnable() {
+                @Override
+                public void run() {
+                    mDisplayIv.setImageBitmap(processedBitmap);
+                }
+            });
+        }
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == LETTER_SETTING_REQUEST_CODE && resultCode == LETTER_SETTING_OK){
+            String rightAnswersStr = data.getStringExtra("rightAnswers");
+            String answerRangeStr = data.getStringExtra("answerRange");
+            Log.e(TAG,"onActivityResult");
+            setAnswers(rightAnswersStr,answerRangeStr);
+        }
+    }
+
+    private void setAnswers(String rightAnswersStr, String answerRangeStr) {
+
+        rightAnswers.clear();
+        answersRange.clear();
+        rightAnswersSection.clear();
+        answerIndex = 0;
+        Log.e(TAG,"Change rightAnswersStr:"+rightAnswersStr);
+        Log.e(TAG,"Change answerRangeStr:"+answerRangeStr);
+        for (int i = 0; i < rightAnswersStr.length(); i++) {
+            char c = rightAnswersStr.charAt(i);;
+            rightAnswers.add(c);
+        }
+        for (int i = 0; i < answerRangeStr.length(); i++) {
+            char c = answerRangeStr.charAt(i);
+            int ci = c - 'A';
+            answersRange.add(ci);
+        }
+        configAnswerSection();
+    }
+
+    private void configAnswerSection() {
+        rightAnswersSection.clear();
+        int answerNumber = rightAnswers.size();
+        //maxIndex也是组数 例如maxIndex = 4; 则组为0,1,2,3
+        int maxIndex = answerNumber / ANSWER_NUM_PER_LINE;
+        if(maxIndex*ANSWER_NUM_PER_LINE < answerNumber){
+            maxIndex++;
+        }
+        if(answerIndex == maxIndex){
+            //第一组
+            answerIndex = 0;
+        }
+        if(answerIndex == (maxIndex-1)){
+            //最后一组
+            for (int i = answerIndex*ANSWER_NUM_PER_LINE; i < answerNumber; i++) {
+                rightAnswersSection.add(rightAnswers.get(i));
+            }
+        }else{
+            for (int i = answerIndex*ANSWER_NUM_PER_LINE; i < (answerIndex+1)*ANSWER_NUM_PER_LINE; i++) {
+                rightAnswersSection.add(rightAnswers.get(i));
+            }
+        }
+        mIndexTv.setText(String.valueOf(answerIndex+1)+"/"+String.valueOf(maxIndex));
+        answerIndex++;
+    }
+
+
 }

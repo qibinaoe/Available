@@ -40,7 +40,7 @@ build cmake_object_order_depends_target_native-lib: phony
 build CMakeFiles/native-lib.dir/native-lib.cpp.o: CXX_COMPILER__native-lib D$:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/native-lib.cpp || cmake_object_order_depends_target_native-lib
   DEFINES = -Dnative_lib_EXPORTS
   DEP_FILE = CMakeFiles\native-lib.dir\native-lib.cpp.o.d
-  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++11 -LD:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/libs/arm64-v8a -O2 -DNDEBUG  -fPIC
+  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -LD:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/libs/arm64-v8a -O2 -DNDEBUG  -fPIC
   INCLUDES = -ID:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/include
   OBJECT_DIR = CMakeFiles\native-lib.dir
   OBJECT_FILE_DIR = CMakeFiles\native-lib.dir
@@ -53,7 +53,7 @@ build CMakeFiles/native-lib.dir/native-lib.cpp.o: CXX_COMPILER__native-lib D$:/U
 # Link the shared library D:\Users\admin\AndroidStudioProjects\Available\app\build\intermediates\cmake\release\obj\arm64-v8a\libnative-lib.so
 
 build D$:/Users/admin/AndroidStudioProjects/Available/app/build/intermediates/cmake/release/obj/arm64-v8a/libnative-lib.so: CXX_SHARED_LIBRARY_LINKER__native-lib CMakeFiles/native-lib.dir/native-lib.cpp.o | C$:/Users/admin/AppData/Local/Android/Sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/21/liblog.so
-  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++11 -LD:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/libs/arm64-v8a -O2 -DNDEBUG
+  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++11 -frtti -fexceptions -LD:/Users/admin/AndroidStudioProjects/Available/app/src/main/cpp/libs/arm64-v8a -O2 -DNDEBUG
   LINK_FLAGS = -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -Wl,--build-id -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
   LINK_LIBRARIES = -lopencv_java4 -landroid -llog -latomic -lm
   OBJECT_DIR = CMakeFiles\native-lib.dir

@@ -9,9 +9,34 @@
         android:text="@string/scan_letter_description"
         android:layout_above="@id/ib_item_scan_letter_take"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:textColor="@color/white"
         android:alpha="0.5"/>
+    <TextView
+        android:id="@+id/tv_item_scan_letter_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ib_item_scan_letter_next"
+        android:text="1/1"
+        android:textSize="20sp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="40dp"
+        android:textColor="@color/white"
+        />
+    <ImageButton
+        android:id="@+id/ib_item_scan_letter_next"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_scan_letter_next"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:alpha="0.5"/>
+
     <ImageButton
         android:id="@+id/ib_item_scan_letter_take"
         android:layout_width="80dp"

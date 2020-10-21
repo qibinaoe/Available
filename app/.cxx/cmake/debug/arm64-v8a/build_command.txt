@@ -7,7 +7,7 @@ arguments :
 -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=D:\Users\admin\AndroidStudioProjects\Available\app\build\intermediates\cmake\debug\obj\arm64-v8a
 -DCMAKE_BUILD_TYPE=Debug
 -DANDROID_NDK=C:\Users\admin\AppData\Local\Android\Sdk\ndk\21.3.6528147
--DCMAKE_CXX_FLAGS=-std=c++11
+-DCMAKE_CXX_FLAGS=-std=c++11 -frtti -fexceptions
 -DCMAKE_SYSTEM_NAME=Android
 -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a
 -DCMAKE_SYSTEM_VERSION=21
