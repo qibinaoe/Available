@@ -17,6 +17,15 @@
         android:layout_margin="20dp"
         android:background="@drawable/ic_back" />
 
+    <TextView
+        android:id="@+id/tv_scan_inform"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray_50"
+        android:alpha="0.5"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        />
     <View
         android:id="@+id/view_upper_ROI_line_scan"
         android:layout_width="match_parent"

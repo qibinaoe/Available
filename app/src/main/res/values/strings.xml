@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Available</string>
-    <string name="drawer_item_academic">教务处页面</string>
-    <string name="drawer_item_academic_desp">查看教务处信息、申请修改成绩</string>
+    <string name="drawer_item_academic_request_modify">申请查看试卷</string>
+    <string name="drawer_item_academic_request_modify_desp">请求教务处发送试卷</string>
+    <string name="drawer_item_academic_request_update">更正试卷信息</string>
+    <string name="drawer_item_academic_request_update_desp">请求教务处更正试卷信息</string>
     <string name="drawer_item_history">查看历史记录</string>
     <string name="drawer_item_history_desp">历史使用记录</string>
     <string name="drawer_item_help">帮助和使用说明</string>

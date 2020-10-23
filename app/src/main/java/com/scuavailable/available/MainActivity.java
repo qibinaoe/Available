@@ -28,6 +28,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.scuavailable.available.about.AboutActivity;
 import com.scuavailable.available.login.LoginActivity;
 import com.scuavailable.available.scan.ScanActivity;
+import com.scuavailable.available.school.RequestModifyActivity;
 import com.scuavailable.available.school.ViewPaperDetailActivity;
 
 
@@ -39,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private AccountHeader headerResult = null;
     private Drawer result = null;
     private IProfile profile;
-    private PrimaryDrawerItem academicOfficeItem;
-    private PrimaryDrawerItem historyRecordItem;
+    private PrimaryDrawerItem academicOfficeRequestModifyItem;
+    private PrimaryDrawerItem academicOfficeRequestUpdateItem;
+//    private PrimaryDrawerItem historyRecordItem;
     private PrimaryDrawerItem helpItem;
     private PrimaryDrawerItem shareItem;
     private PrimaryDrawerItem aboutItem;
@@ -103,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
 //        用户信息栏
         // Create the AccountHeader
         buildHeader(false, savedInstanceState);
-        academicOfficeItem =  new PrimaryDrawerItem().withIdentifier(1).withName(R.string.drawer_item_academic).withDescription(R.string.drawer_item_academic_desp).withIcon(getResources().getDrawable(R.drawable.ic_academic)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
-        historyRecordItem =  new PrimaryDrawerItem().withIdentifier(2).withName(R.string.drawer_item_history).withDescription(R.string.drawer_item_history_desp).withIcon(getResources().getDrawable(R.drawable.ic_history)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
+        academicOfficeRequestModifyItem =  new PrimaryDrawerItem().withIdentifier(1).withName(R.string.drawer_item_academic_request_modify).withDescription(R.string.drawer_item_academic_request_modify_desp).withIcon(getResources().getDrawable(R.drawable.ic_academic)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
+        academicOfficeRequestUpdateItem =  new PrimaryDrawerItem().withIdentifier(2).withName(R.string.drawer_item_academic_request_update).withDescription(R.string.drawer_item_academic_request_update_desp).withIcon(getResources().getDrawable(R.drawable.ic_academic_update)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
+//        historyRecordItem =  new PrimaryDrawerItem().withIdentifier(2).withName(R.string.drawer_item_history).withDescription(R.string.drawer_item_history_desp).withIcon(getResources().getDrawable(R.drawable.ic_history)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
         helpItem =  new PrimaryDrawerItem().withIdentifier(3).withName(R.string.drawer_item_help).withDescription(R.string.drawer_item_help_desp).withIcon(getResources().getDrawable(R.drawable.ic_help)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
         shareItem =  new PrimaryDrawerItem().withIdentifier(4).withName(R.string.drawer_item_share).withDescription(R.string.drawer_item_share_desp).withIcon(getResources().getDrawable(R.drawable.ic_share)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
         aboutItem =  new PrimaryDrawerItem().withIdentifier(5).withName(R.string.drawer_item_about).withDescription(R.string.drawer_item_about_desp).withIcon(getResources().getDrawable(R.drawable.ic_about)).withDescriptionTextColorRes(R.color.drawer_item_desp_color).withSelectable(false);
@@ -116,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withAccountHeader(headerResult) //set the AccountHeader we created earlier for the header
                 .addDrawerItems(
-                        academicOfficeItem,
-                        historyRecordItem,
+                        academicOfficeRequestModifyItem,
+                        academicOfficeRequestUpdateItem,
                         helpItem,
                         shareItem,
                         aboutItem
@@ -130,18 +133,24 @@ public class MainActivity extends AppCompatActivity {
                         int id = (int)drawerItem.getIdentifier();
                         switch (id){
                             case 1:
-                                //教务处页面
-                                startActivity(new Intent(mContext, ViewPaperDetailActivity.class));
-
+                                //查看试卷
+                                Log.e(TAG,"查看试卷");
+                                startActivity(new Intent(mContext, RequestModifyActivity.class));
                                 break;
                             case 2:
-                                //查看历史记录
+                                //更正试卷
+                                Log.e(TAG,"更正试卷");
+                                startActivity(new Intent(mContext, ViewPaperDetailActivity.class));
                                 break;
                             case 3:
                                 //帮助和使用说明
+                                Log.e(TAG,"帮助和使用说明");
                                 break;
                             case 4:
                                 //分享给朋友
+                                Log.e(TAG,"分享给朋友");
+
+
                                 Intent shareIntent = new Intent();
                                 shareIntent.setAction(Intent.ACTION_SEND);
                                 shareIntent.setType("text/plain");

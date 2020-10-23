@@ -11,7 +11,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.camera2.CameraAccessException;
@@ -86,7 +88,7 @@ public class ScanActivity extends AppCompatActivity {
     IndicatorPagerAdapter indicatorPagerAdapter;
     ImageView mDisplayIv;
     View mUpperLine,mLowerLine,mVerticalLine;
-    TextView mIndexTv;
+    TextView mIndexTv,mInformTv;
     ImageButton mCountTakeIb,mLetterTakeIb,mNumberTakeIb,mLetterSettingIb,mLetterNextIb;
 
     private List<View> mBottomViewList;
@@ -147,17 +149,17 @@ public class ScanActivity extends AppCompatActivity {
 
     private void initData() {
         rightAnswers = new ArrayList<Character>();
-        rightAnswers.add('A');
-        rightAnswers.add('B');
-        rightAnswers.add('C');
-        rightAnswers.add('D');
-        rightAnswers.add('A');
+//        rightAnswers.add('A');
+//        rightAnswers.add('B');
+//        rightAnswers.add('C');
+//        rightAnswers.add('D');
+//        rightAnswers.add('A');
         rightAnswersSection = new ArrayList<Character>();
-        rightAnswersSection.add('A');
-        rightAnswersSection.add('B');
-        rightAnswersSection.add('C');
-        rightAnswersSection.add('D');
-        rightAnswersSection.add('A');
+//        rightAnswersSection.add('A');
+//        rightAnswersSection.add('B');
+//        rightAnswersSection.add('C');
+//        rightAnswersSection.add('D');
+//        rightAnswersSection.add('A');
         answersRange = new ArrayList<Integer>();
         answersRange.add(0);
         answersRange.add(1);
@@ -234,6 +236,7 @@ public class ScanActivity extends AppCompatActivity {
         mLowerLine.setVisibility(View.GONE);
         mDisplayIv.setVisibility(View.GONE);
         mVerticalLine.setVisibility(View.GONE);
+        mInformTv.setVisibility(View.GONE);
         mDisplayIv.setImageDrawable(null);
 
     }
@@ -260,7 +263,9 @@ public class ScanActivity extends AppCompatActivity {
         mDisplayIv.setVisibility(View.VISIBLE);
         mVerticalLine.setVisibility(View.VISIBLE);
 
-
+        mInformTv.setTranslationY(upperHeight-mInformTv.getTextSize()*3);
+        mInformTv.setText("请将客观题答题置于框框内");
+        mInformTv.setVisibility(View.VISIBLE);
     }
 
     private void startCountMode() {
@@ -277,6 +282,11 @@ public class ScanActivity extends AppCompatActivity {
         mUpperLine.setVisibility(View.VISIBLE);
         mLowerLine.setVisibility(View.VISIBLE);
         mDisplayIv.setVisibility(View.VISIBLE);
+
+        mInformTv.setTranslationY(upperHeight-mInformTv.getTextSize()*2);
+        mInformTv.setText("请将分数栏置于框框内");
+        mInformTv.setVisibility(View.VISIBLE);
+
         Log.e(TAG,"upper " + String.valueOf(upperHeight) + "lower " + String.valueOf(lowerHeight));
 
 
@@ -309,6 +319,7 @@ public class ScanActivity extends AppCompatActivity {
         mLetterNextIb = letterInflate.findViewById(R.id.ib_item_scan_letter_next);
         mIndexTv = letterInflate.findViewById(R.id.tv_item_scan_letter_index);
 
+        mInformTv = findViewById(R.id.tv_scan_inform);
         mViewPager = findViewById(R.id.vp_scan);
 
         mPageIndicatorView = findViewById(R.id.pageIndicatorView);
@@ -340,9 +351,11 @@ public class ScanActivity extends AppCompatActivity {
                     break;
                 case R.id.ib_item_scan_letter_take:
 //                    Toast.makeText(mContext,"ib_item_scan_letter_take",Toast.LENGTH_SHORT).show();
+                    letterTake();
                     break;
                 case R.id.ib_item_scan_number_take:
 //                    Toast.makeText(mContext,"ib_item_scan_number_take",Toast.LENGTH_SHORT).show();
+                    numberTake();
                     break;
                 case R.id.ib_item_scan_letter_setting:
 //                    Toast.makeText(mContext,"ib_item_scan_letter_setting",Toast.LENGTH_SHORT).show();
@@ -356,20 +369,66 @@ public class ScanActivity extends AppCompatActivity {
         }
     };
 
+    private void numberTake() {
+        if ( cameraDevice == null) {
+            return;
+        }
+
+        Bitmap backBitmap = mTextureView.getBitmap();
+        mDisplayIv.setDrawingCacheEnabled(true);
+        Bitmap frontBitmap = Bitmap.createBitmap(mDisplayIv.getDrawingCache());
+        mDisplayIv.setDrawingCacheEnabled(false);
+
+        Bitmap merge = mergeBitmap(backBitmap, frontBitmap);
+        String path = storeImage(merge,"number_take_");
+        Intent intent = new Intent(mContext, ScanNumberShowActivity.class);
+        intent.putExtra("filepath",path);
+        startActivity(intent);
+    }
+
+    private void letterTake() {
+        if ( cameraDevice == null) {
+            return;
+        }
+        Bitmap backBitmap = mTextureView.getBitmap();
+        mDisplayIv.setDrawingCacheEnabled(true);
+        Bitmap frontBitmap = Bitmap.createBitmap(mDisplayIv.getDrawingCache());
+        mDisplayIv.setDrawingCacheEnabled(false);
+
+        Bitmap merge = mergeBitmap(backBitmap, frontBitmap);
+        String path = storeImage(merge,"number_take_");
+        Intent intent = new Intent(mContext, ScanLetterShowActivity.class);
+        intent.putExtra("filepath",path);
+        startActivity(intent);
+    }
+
     private void paperCount() {
         if ( cameraDevice == null) {
             return;
         }
 
         Bitmap bitmap = mTextureView.getBitmap();
-        String path = storeImage(bitmap);
+        String path = storeImage(bitmap,"paper_count_");
         Intent intent = new Intent(mContext, PaperCountActivity.class);
         intent.putExtra("filepath",path);
         startActivity(intent);
     }
+    public static Bitmap mergeBitmap(Bitmap backBitmap, Bitmap frontBitmap) {
 
-    private String storeImage(Bitmap image) {
-        File pictureFile = getOutputMediaFile();
+        if (backBitmap == null || backBitmap.isRecycled()
+                || frontBitmap == null || frontBitmap.isRecycled()) {
+            Log.e(TAG, "backBitmap=" + backBitmap + ";frontBitmap=" + frontBitmap);
+            return null;
+        }
+        Bitmap bitmap = backBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(bitmap);
+        Rect baseRect  = new Rect(0, 0, backBitmap.getWidth(), backBitmap.getHeight());
+        Rect frontRect = new Rect(0, 0, frontBitmap.getWidth(), frontBitmap.getHeight());
+        canvas.drawBitmap(frontBitmap, frontRect, baseRect, null);
+        return bitmap;
+    }
+    private String storeImage(Bitmap image,String nickname) {
+        File pictureFile = getOutputMediaFile(nickname);
         if (pictureFile == null) {
             Log.d(TAG,
                     "Error creating media file, check storage permissions: ");// e.getMessage());
@@ -392,7 +451,7 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     /** Create a File for saving an image or video */
-    private  File getOutputMediaFile(){
+    private  File getOutputMediaFile(String nickname){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
@@ -412,7 +471,7 @@ public class ScanActivity extends AppCompatActivity {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
         File mediaFile;
-        String mImageName="Available_"+ timeStamp +".jpg";
+        String mImageName="Available_"+ nickname+timeStamp +".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         return mediaFile;
     }
@@ -820,6 +879,9 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void configAnswerSection() {
+        if(rightAnswers.isEmpty()){
+            return;
+        }
         rightAnswersSection.clear();
         int answerNumber = rightAnswers.size();
         //maxIndex也是组数 例如maxIndex = 4; 则组为0,1,2,3

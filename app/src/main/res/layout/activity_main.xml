@@ -29,24 +29,24 @@
             android:includeFontPadding="false"
             android:format12Hour="hh:mm"
             android:layout_marginLeft="10dp"/>
-        <TextClock
+        <TextView
             android:id="@+id/tv_main_timename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:layout_marginBottom="10dp"
-            android:format12Hour="aa"
+            android:text="下午"
             android:layout_toRightOf="@id/tv_main_time"
             android:layout_alignBottom="@id/tv_main_time"
             android:layout_marginLeft="10dp"
             android:textColor="@color/main_timename_color"
             android:textStyle="bold"
             android:textSize="25sp"/>
-        <TextClock
+        <TextView
             android:id="@+id/tv_main_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:format12Hour="yyyy/MM/dd"
+            android:text="2020/10/23"
             android:layout_below="@id/tv_main_timename"
             android:layout_alignRight="@id/tv_main_timename"
             android:textColor="@color/main_date_color"
@@ -63,7 +63,7 @@
                 android:id="@+id/tv_main_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="XXXXX"
+                android:text="成都"
                 android:textColor="@color/main_location_color"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
@@ -103,7 +103,7 @@
                 android:id="@+id/tv_main_weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="33℃ 晴"
+                android:text="17℃ 晴"
                 android:gravity="center"
                 android:layout_marginTop="15dp"
                 android:textStyle="bold"

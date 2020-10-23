@@ -23,13 +23,4 @@
         android:gravity="center|bottom"
         android:layout_marginBottom="30dp"
         />
-    <TextView
-        android:id="@+id/tv_current_matrix"
-        android:text="hahaha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#60000000"
-        android:gravity="center|bottom"
-        android:layout_alignParentBottom="true"
-        android:textColor="@android:color/white"/>
 </RelativeLayout>
